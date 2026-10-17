@@ -1,0 +1,387 @@
+import subprocess
+import os
+
+HTML_CONTENT = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shubham Verma - Resume</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm 13mm 10mm 13mm;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    font-size: 9.2pt;
+    line-height: 1.36;
+  }
+  .header {
+    text-align: center;
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 6px;
+    margin-bottom: 9px;
+  }
+  .name {
+    font-size: 20pt;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .title {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #0284c7;
+    margin-bottom: 5px;
+  }
+  .contact-bar {
+    font-size: 8.5pt;
+    color: #475569;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .contact-bar a {
+    color: #0284c7;
+    text-decoration: none;
+  }
+  
+  .section {
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 9.5pt;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+  }
+  
+  p.summary {
+    color: #334155;
+    text-align: justify;
+    line-height: 1.34;
+  }
+  
+  .skills-table {
+    width: 100%;
+    font-size: 8.8pt;
+  }
+  .skills-table td {
+    padding: 1.5px 0;
+    vertical-align: top;
+  }
+  .skills-label {
+    font-weight: 700;
+    color: #0f172a;
+    width: 155px;
+    white-space: nowrap;
+  }
+  .skills-val {
+    color: #334155;
+  }
+  
+  .item {
+    margin-bottom: 6px;
+  }
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 9pt;
+  }
+  .item-title {
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .item-tech {
+    font-weight: 600;
+    color: #0284c7;
+    font-size: 8.3pt;
+  }
+  .item-date {
+    font-size: 8.3pt;
+    color: #64748b;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .item-sub {
+    font-size: 8.5pt;
+    color: #475569;
+    font-style: italic;
+    margin-bottom: 2px;
+  }
+  ul.bullets {
+    margin-left: 14px;
+    margin-top: 1.5px;
+  }
+  ul.bullets li {
+    color: #334155;
+    margin-bottom: 1.5px;
+    line-height: 1.32;
+    font-size: 8.6pt;
+  }
+  ul.bullets li strong {
+    color: #0f172a;
+  }
+  
+  .cert-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px 14px;
+  }
+  .cert-item {
+    font-size: 8.4pt;
+    line-height: 1.3;
+    color: #334155;
+  }
+  .cert-name {
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .cert-issuer {
+    color: #0284c7;
+    font-weight: 600;
+  }
+  .cert-id {
+    color: #64748b;
+    font-size: 7.8pt;
+    font-family: monospace;
+  }
+  
+  .edu-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+  }
+  .edu-school {
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .edu-degree {
+    color: #334155;
+    font-size: 8.5pt;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="name">Shubham Verma</div>
+  <div class="title">Data Analyst & Business Intelligence Specialist</div>
+  <div class="contact-bar">
+    <span>📧 <a href="mailto:sv9235706446@gmail.com">sv9235706446@gmail.com</a></span>
+    <span>📱 (+91) 9235706446</span>
+    <span>📍 Uttar Pradesh, India</span>
+    <span>🔗 <a href="https://github.com/Shubham-Verma607">github.com/Shubham-Verma607</a></span>
+    <span>💼 <a href="https://www.linkedin.com/in/shubhamverma234">linkedin.com/in/shubhamverma234</a></span>
+  </div>
+</div>
+
+<!-- PROFESSIONAL SUMMARY -->
+<div class="section">
+  <div class="section-title">Professional Summary</div>
+  <p class="summary">
+    Analytical and detail-oriented Data Analyst skilled in <strong>Power BI, SQL, Python, and dimensional data modeling</strong>. Experienced in designing star-schema architectures, formulating complex DAX time-intelligence calculations, and executing SQL pipelines (PIVOT, window functions, CTEs) to convert fragmented datasets into executive-ready dashboards. Dedicated to evidence-backed insights and business performance optimization.
+  </p>
+</div>
+
+<!-- TECHNICAL SKILLS -->
+<div class="section">
+  <div class="section-title">Technical Competencies</div>
+  <table class="skills-table">
+    <tr>
+      <td class="skills-label">Business Intelligence:</td>
+      <td class="skills-val">Power BI, DAX Measures, Power Query (M), Star Schema Dimensional Modeling, Time-Intelligence, C-Suite KPIs</td>
+    </tr>
+    <tr>
+      <td class="skills-label">Database Engineering:</td>
+      <td class="skills-val">SQL (MySQL, SQLite), Window Functions (ROW_NUMBER, RANK), PIVOT, CTEs, CASE Transformations, Relational Schemas</td>
+    </tr>
+    <tr>
+      <td class="skills-label">Programming & Analytics:</td>
+      <td class="skills-val">Python, Pandas, NumPy, Exploratory Data Analysis (EDA), Data Sanitization, Matplotlib</td>
+    </tr>
+    <tr>
+      <td class="skills-label">Tools & Frameworks:</td>
+      <td class="skills-val">Microsoft Excel (Advanced, Pivot Tables, XLOOKUP), Git, GitHub, VS Code, Google Gemini API (Generative AI)</td>
+    </tr>
+  </table>
+</div>
+
+<!-- KEY PROJECTS -->
+<div class="section">
+  <div class="section-title">Featured Analytical Projects</div>
+
+  <div class="item">
+    <div class="item-header">
+      <div>
+        <span class="item-title">Retail Sales Executive Intelligence Dashboard</span>
+        <span class="item-tech">| Power BI, DAX, Power Query, Star Schema</span>
+      </div>
+      <div class="item-date">2026</div>
+    </div>
+    <ul class="bullets">
+      <li>Designed an enterprise star-schema linking <strong>4 dimension tables</strong> to a central sales fact table; formulated 12+ DAX measures (Total Net Sales, Total Profit, SAMEPERIODLASTYEAR) for C-suite drill-downs.</li>
+    </ul>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div>
+        <span class="item-title">Mobile Product Sales Intelligence Dashboard</span>
+        <span class="item-tech">| Power BI, DAX, Excel, Geospatial Mapping</span>
+      </div>
+      <div class="item-date">2026</div>
+    </div>
+    <ul class="bullets">
+      <li>Analyzed <strong>64M in sales across 326 transactions</strong> (40K AOV); mapped city-level purchasing concentrations across India, brand shares (Apple 14.75M, Vivo 12.43M), and Friday peak sales cycles (10.9M).</li>
+    </ul>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div>
+        <span class="item-title">Amazon E-Commerce Sales & Profitability Dashboard</span>
+        <span class="item-tech">| Power BI, DAX, Power Query</span>
+      </div>
+      <div class="item-date">2026</div>
+    </div>
+    <ul class="bullets">
+      <li>Constructed an executive dashboard analyzing <strong>$1.00M in revenue, $179.19K net profit</strong>, and 3K orders; identified SKU margin risks and instituted a 20% max discount ceiling.</li>
+    </ul>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div>
+        <span class="item-title">Blinkit Quick-Commerce Grocery Analytics & SQL Pipeline</span>
+        <span class="item-tech">| SQL (MySQL), Power BI, PIVOT</span>
+      </div>
+      <div class="item-date">2026</div>
+    </div>
+    <ul class="bullets">
+      <li>Standardized <strong>8,523 grocery SKU records</strong> using SQL CASE statements; formulated SQL PIVOT matrix queries cross-tabulating outlet tiers against fat content to verify $1.20M in revenue.</li>
+    </ul>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div>
+        <span class="item-title">KrishiMitra: AI Agritech Decision Platform</span>
+        <span class="item-tech">| Python, Flask, MySQL, Gemini 2.5 API</span>
+      </div>
+      <div class="item-date">2026</div>
+    </div>
+    <ul class="bullets">
+      <li>Built multimodal agronomic advisory platform pairing Google Gemini LLM with structured crop calendar taxonomies and relational MySQL chat session logging.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- VERIFIED CERTIFICATIONS -->
+<div class="section">
+  <div class="section-title">Verified Industry Certifications</div>
+  <div class="cert-grid">
+    <div class="cert-item">
+      • <span class="cert-name">Data to Dashboard in Power BI</span> — <span class="cert-issuer">Skill Course</span> (2026)<br>
+      <span class="cert-id">Cert ID: SC-HRQ51CVLM0 | ISO 9001:2015 Accredited</span>
+    </div>
+    <div class="cert-item">
+      • <span class="cert-name">SQL Course (Self Learning)</span> — <span class="cert-issuer">Skill Course</span> (2026)<br>
+      <span class="cert-id">Cert ID: SC-E22B3ABD33 | ISO 9001:2015 Accredited</span>
+    </div>
+    <div class="cert-item">
+      • <span class="cert-name">Advanced SQL</span> — <span class="cert-issuer">Kaggle Learn</span> (July 2026)<br>
+      <span class="cert-id">Credential: Head of Kaggle Learn (Alexis Cook)</span>
+    </div>
+    <div class="cert-item">
+      • <span class="cert-name">Career Edge - AI Foundation</span> — <span class="cert-issuer">Tata Consultancy Services</span> (2026)<br>
+      <span class="cert-id">Cert ID: 279243-31098904-1016 | TCS iON</span>
+    </div>
+    <div class="cert-item" style="grid-column: span 2;">
+      • <span class="cert-name">Mastering Power BI: Data Analysis & Dashboard Creation</span> — <span class="cert-issuer">Skill India & NSDC (PHN Technology)</span> (Oct 2026)<br>
+      <span class="cert-id">Authorized by Skill India Digital Hub | National Skill Development Corporation (NSDC)</span>
+    </div>
+  </div>
+</div>
+
+<!-- EDUCATION & HONORS -->
+<div class="section">
+  <div class="section-title">Education & Academic Distinction</div>
+  <div class="edu-row">
+    <div>
+      <div class="edu-school">Dr. A.P.J. Abdul Kalam Technical University (AKTU) / R.V. Institute of Technology</div>
+      <div class="edu-degree">Bachelor of Technology (B.Tech) in Computer Science & Engineering (Coursework: DBMS, SQL, Python, DSA)</div>
+    </div>
+    <div class="item-date">2024 – 2028</div>
+  </div>
+  <div class="edu-row" style="margin-top: 3px;">
+    <div>
+      <div class="edu-school">B.H.D. Inter College (UP Board)</div>
+      <div class="edu-degree">Class XII (Senior Secondary Examination) — <strong>91.6% Distinction (Science & Mathematics)</strong></div>
+    </div>
+    <div class="item-date">Graduated 2024</div>
+  </div>
+</div>
+
+<!-- LEADERSHIP -->
+<div class="section" style="margin-bottom: 0;">
+  <div class="section-title">Leadership & Collegiate Activity</div>
+  <div class="item" style="margin-bottom: 0;">
+    <div class="item-header">
+      <div>
+        <span class="item-title">Membership Coordinator</span> — Technocarts Club, RVIT
+      </div>
+      <div class="item-date">2025 – Present</div>
+    </div>
+    <div class="item-sub" style="margin-top: 1px;">
+      Coordinated collegiate tech workshops and hackathons for 200+ students; facilitated skill-sharing sessions in SQL and programming fundamentals.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+"""
+
+html_path = os.path.abspath("scratch/resume_template.html")
+os.makedirs("scratch", exist_ok=True)
+with open(html_path, "w", encoding="utf-8") as f:
+    f.write(HTML_CONTENT)
+
+pdf_out = os.path.abspath("public/assets/resume/Shubham_Verma_Resume.pdf")
+dist_pdf_out = os.path.abspath("dist/assets/resume/Shubham_Verma_Resume.pdf")
+
+chrome_exe = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+cmd = [
+    chrome_exe,
+    "--headless",
+    "--disable-gpu",
+    "--no-pdf-header-footer",
+    f"--print-to-pdf={pdf_out}",
+    html_path
+]
+
+print("Running Chrome print-to-pdf...")
+res = subprocess.run(cmd, capture_output=True, text=True)
+print("Return code:", res.returncode)
+
+# Also copy to dist if dist exists
+if os.path.exists("dist/assets/resume"):
+    import shutil
+    shutil.copyfile(pdf_out, dist_pdf_out)
+    print("Copied to dist/assets/resume/Shubham_Verma_Resume.pdf")
